@@ -63,8 +63,8 @@ input,select,textarea{font-family:inherit}
 /* ── HERO ───────────────────────────────────────── */
 .hero{
   background:var(--ink);
-  padding:44px 24px 0;
-  position:relative;overflow:hidden;min-height:520px;
+  padding:44px 24px 32px;
+  position:relative;overflow:hidden;
   display:flex;flex-direction:column;
 }
 .hero-glow{
@@ -415,32 +415,6 @@ input,select,textarea{font-family:inherit}
     </div>
     <h1 class="anim-fadeup-2">Your local fundi,<br/><em>minutes away.</em></h1>
     <p class="hero-sub anim-fadeup-3">Electricians, plumbers and phone/laptop repair — verified, local, and available right now in Roysambu.</p>
-    <div class="hero-btns anim-fadeup-4">
-      <button class="btn-primary" onclick="show('v-request')">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-        Request a fundi now
-      </button>
-      <button class="btn-ghost" onclick="show('v-join')">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        I'm a fundi — join us
-      </button>
-    </div>
-
-    <!-- SERVICE PILLS -->
-    <div class="hero-pills">
-      <div class="hero-pill">
-        <div class="hp-icon">⚡</div>
-        <div><div class="hp-label">Electrician</div><div class="hp-sub">Wiring · Faults</div></div>
-      </div>
-      <div class="hero-pill">
-        <div class="hp-icon">🔧</div>
-        <div><div class="hp-label">Plumber</div><div class="hp-sub">Pipes · Leaks</div></div>
-      </div>
-      <div class="hero-pill">
-        <div class="hp-icon">📱</div>
-        <div><div class="hp-label">Tech Repair</div><div class="hp-sub">Phone · Laptop</div></div>
-      </div>
-    </div>
   </div>
 
   <!-- TEAM PHOTO -->
@@ -457,6 +431,38 @@ input,select,textarea{font-family:inherit}
     <div class="trust-item"><div class="trust-num">Roysambu</div><div class="trust-lbl">Only</div></div>
     <div class="trust-item"><div class="trust-num">3</div><div class="trust-lbl">Core services</div></div>
     <div class="trust-item"><div class="trust-num">&lt;30m</div><div class="trust-lbl">Avg. response</div></div>
+  </div>
+
+  <!-- HERO BUTTONS (below photo) -->
+  <div style="padding:28px 20px 8px;background:var(--ink)">
+    <div class="hero-btns anim-fadeup-4" style="margin-bottom:0">
+      <button class="btn-primary" onclick="show('v-request')">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Request a fundi now
+      </button>
+      <button class="btn-ghost" onclick="show('v-join')">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        I'm a fundi — join us
+      </button>
+    </div>
+  </div>
+
+  <!-- SERVICE PILLS (still on dark bg) -->
+  <div style="background:var(--ink);padding:20px 20px 32px">
+    <div class="hero-pills" style="margin:0">
+      <div class="hero-pill">
+        <div class="hp-icon">⚡</div>
+        <div><div class="hp-label">Electrician</div><div class="hp-sub">Wiring · Faults</div></div>
+      </div>
+      <div class="hero-pill">
+        <div class="hp-icon">🔧</div>
+        <div><div class="hp-label">Plumber</div><div class="hp-sub">Pipes · Leaks</div></div>
+      </div>
+      <div class="hero-pill">
+        <div class="hp-icon">📱</div>
+        <div><div class="hp-label">Tech Repair</div><div class="hp-sub">Phone · Laptop</div></div>
+      </div>
+    </div>
   </div>
 
   <!-- SERVICES -->
@@ -648,7 +654,8 @@ input,select,textarea{font-family:inherit}
     <strong>FundiGo Kenya</strong><br/>
     Connecting Roysambu homes with trusted local fundis.<br/>
     Serving: Mirema · Zimmerman · Githurai 44 &amp; 45 · Lucky Summer · Roysambu Estate · TRM Area<br/><br/>
-    Powered by WhatsApp &nbsp;·&nbsp; Roysambu, Nairobi
+    Powered by WhatsApp &nbsp;·&nbsp; Roysambu, Nairobi<br/><br/>
+    <span onclick="openAdmin()" style="color:rgba(255,255,255,.1);font-size:10px;cursor:default;user-select:none">admin</span>
   </div>
 
 </div><!-- /v-home -->
@@ -894,29 +901,120 @@ input,select,textarea{font-family:inherit}
 
 <div class="toast" id="toast"></div>
 
-<script>
-// ── YOUR WHATSAPP BUSINESS NUMBER ─────────────────
-// Replace with your real number: country code + number, no + or spaces
-// Example: 254712345678
+<!-- ══════════════════════════════════════
+     ADMIN PANEL
+══════════════════════════════════════ -->
+<div class="view" id="v-admin">
+  <nav class="nav">
+    <div class="nav-logo">Fundi<span>Go</span> <span style="font-size:11px;color:var(--gold);font-weight:700">ADMIN</span></div>
+    <button class="nav-pill" onclick="adminLogout()" style="background:var(--danger);font-size:12px;padding:8px 14px">Logout</button>
+  </nav>
+  <div style="padding:20px">
+
+    <!-- ADMIN STATS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px">
+      <div style="background:var(--surface);border-radius:14px;padding:16px;text-align:center;box-shadow:var(--sh)">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--teal)" id="stat-fundis">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">Fundis</div>
+      </div>
+      <div style="background:var(--surface);border-radius:14px;padding:16px;text-align:center;box-shadow:var(--sh)">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--gold)" id="stat-requests">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">Requests</div>
+      </div>
+      <div style="background:var(--surface);border-radius:14px;padding:16px;text-align:center;box-shadow:var(--sh)">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--wa)" id="stat-pending">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">Pending</div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button id="tab-fundis-btn" onclick="adminTab('fundis')" style="flex:1;padding:11px;border-radius:10px;border:none;background:var(--teal);color:#fff;font-weight:700;font-size:13px">👷 Fundis</button>
+      <button id="tab-requests-btn" onclick="adminTab('requests')" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid rgba(0,0,0,.1);background:#fff;color:var(--ink2);font-weight:700;font-size:13px">🛠️ Requests</button>
+    </div>
+
+    <!-- FUNDIS LIST -->
+    <div id="tab-fundis">
+      <div id="admin-fundis-list" style="display:flex;flex-direction:column;gap:12px">
+        <div style="text-align:center;padding:40px;color:var(--muted)">Loading fundis…</div>
+      </div>
+    </div>
+
+    <!-- REQUESTS LIST -->
+    <div id="tab-requests" style="display:none">
+      <div id="admin-requests-list" style="display:flex;flex-direction:column;gap:12px">
+        <div style="text-align:center;padding:40px;color:var(--muted)">Loading requests…</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="spacer"></div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="view" id="v-admin-login">
+  <nav class="nav">
+    <div class="nav-logo">Fundi<span>Go</span></div>
+  </nav>
+  <div style="padding:60px 28px;text-align:center">
+    <div style="font-size:40px;margin-bottom:16px">🔐</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px">Admin access</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:28px">FundiGo dashboard</div>
+    <div class="field" style="text-align:left">
+      <label>Password</label>
+      <input type="password" id="admin-pw" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()"/>
+    </div>
+    <button class="btn-teal" onclick="adminLogin()">Enter Dashboard</button>
+    <div style="margin-top:16px"><button onclick="show('v-home')" style="background:none;border:none;color:var(--muted);font-size:13px">← Back to site</button></div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, serverTimestamp, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── CONFIGURE YOUR FIREBASE PROJECT ───────────────
+// Replace these values with your actual Firebase project config
+// Firebase Console → Project Settings → Your apps → Web app → Config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── ADMIN PASSWORD (change this) ───────────────────
+const ADMIN_PASSWORD = 'fundigo2024';
+
+// ── WHATSAPP NUMBER ────────────────────────────────
 const FUNDIGO_WA = '254734447870';
 
+// ── STATE ──────────────────────────────────────────
 let selectedCategory = '';
 let pendingRequestMsg = '';
 let pendingJoinMsg = '';
+let adminLoggedIn = false;
 
-function show(id){
+// ── CORE UTILS ─────────────────────────────────────
+window.show = function(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo({top:0,behavior:'instant'});
 }
 
-function pickCat(el,name){
+window.pickCat = function(el,name){
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
   selectedCategory=name;
 }
 
-function toast(msg){
+window.toast = function(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
@@ -934,7 +1032,8 @@ function openWA(msg){
   window.open('https://wa.me/'+FUNDIGO_WA+'?text='+encodeURIComponent(msg),'_blank');
 }
 
-function submitRequest(){
+// ── SUBMIT REQUEST → FIRESTORE + WHATSAPP ──────────
+window.submitRequest = async function(){
   if(!selectedCategory){toast('⚠️ Please select a service');return}
   const name=val('r-name'),phone=val('r-phone'),loc=val('r-location'),issue=val('r-issue');
   if(!name){shake('r-name');toast('⚠️ Please enter your name');return}
@@ -944,6 +1043,22 @@ function submitRequest(){
 
   const urgency=val('r-urgency')||'🔴 Urgent — within the hour';
   const ptime=val('r-time');
+
+  // Save to Firestore
+  try {
+    await addDoc(collection(db,'requests'),{
+      service: selectedCategory,
+      customer_name: name,
+      customer_phone: phone,
+      location: loc,
+      issue: issue,
+      urgency: urgency,
+      preferred_time: ptime||null,
+      status: 'new',
+      assigned_fundi: null,
+      created_at: serverTimestamp()
+    });
+  } catch(e){ console.warn('Firestore write failed:',e); }
 
   const msg=`🛠️ *NEW SERVICE REQUEST — FundiGo*\n──────────────────────\n*Service:* ${selectedCategory}\n*Name:* ${name}\n*Phone:* ${phone}\n*Location:* ${loc}, Roysambu\n*Issue:* ${issue}\n*Urgency:* ${urgency}${ptime?'\n*Preferred time:* '+ptime:''}\n──────────────────────\n_Sent via FundiGo app_`;
 
@@ -955,9 +1070,10 @@ function submitRequest(){
   openWA(msg);
 }
 
-function sendRequestWA(){openWA(pendingRequestMsg)}
+window.sendRequestWA = function(){openWA(pendingRequestMsg)}
 
-function submitJoin(){
+// ── SUBMIT FUNDI APPLICATION → FIRESTORE + WHATSAPP
+window.submitJoin = async function(){
   const name=val('j-name'),phone=val('j-phone'),service=val('j-service'),area=val('j-area');
   if(!name){shake('j-name');toast('⚠️ Please enter your full name');return}
   if(!phone){shake('j-phone');toast('⚠️ Please enter your WhatsApp number');return}
@@ -970,6 +1086,24 @@ function submitJoin(){
   const bio=val('j-bio')||'Not provided';
   const avail=val('j-avail')||'Flexible';
 
+  // Save to Firestore
+  try {
+    await addDoc(collection(db,'fundis'),{
+      name: name,
+      phone: phone,
+      service: service,
+      area: area,
+      experience: exp,
+      pricing_min: pmin||null,
+      pricing_max: pmax||null,
+      pricing_display: pricing,
+      bio: bio,
+      availability: avail,
+      status: 'pending',   // you approve in admin
+      joined_at: serverTimestamp()
+    });
+  } catch(e){ console.warn('Firestore write failed:',e); }
+
   const msg=`👷 *NEW FUNDI APPLICATION — FundiGo*\n──────────────────────\n*Full name:* ${name}\n*WhatsApp:* ${phone}\n*Service:* ${service}\n*Area:* ${area}, Roysambu\n*Experience:* ${exp}\n*Pricing:* ${pricing}\n*Availability:* ${avail}\n*Bio:* ${bio}\n──────────────────────\n_Sent via FundiGo app_`;
 
   pendingJoinMsg=msg;
@@ -980,7 +1114,131 @@ function submitJoin(){
   openWA(msg);
 }
 
-function sendJoinWA(){openWA(pendingJoinMsg)}
+window.sendJoinWA = function(){openWA(pendingJoinMsg)}
+
+// ── ADMIN ──────────────────────────────────────────
+window.openAdmin = function(){
+  if(adminLoggedIn){ loadAdmin(); show('v-admin'); }
+  else show('v-admin-login');
+}
+
+window.adminLogin = function(){
+  const pw=document.getElementById('admin-pw').value;
+  if(pw===ADMIN_PASSWORD){
+    adminLoggedIn=true;
+    loadAdmin();
+    show('v-admin');
+  } else {
+    document.getElementById('admin-pw').style.borderColor='var(--danger)';
+    toast('⚠️ Wrong password');
+  }
+}
+
+window.adminLogout = function(){
+  adminLoggedIn=false;
+  show('v-home');
+}
+
+window.adminTab = function(tab){
+  document.getElementById('tab-fundis').style.display = tab==='fundis'?'block':'none';
+  document.getElementById('tab-requests').style.display = tab==='requests'?'block':'none';
+  document.getElementById('tab-fundis-btn').style.background = tab==='fundis'?'var(--teal)':'#fff';
+  document.getElementById('tab-fundis-btn').style.color = tab==='fundis'?'#fff':'var(--ink2)';
+  document.getElementById('tab-fundis-btn').style.border = tab==='fundis'?'none':'1.5px solid rgba(0,0,0,.1)';
+  document.getElementById('tab-requests-btn').style.background = tab==='requests'?'var(--teal)':'#fff';
+  document.getElementById('tab-requests-btn').style.color = tab==='requests'?'#fff':'var(--ink2)';
+  document.getElementById('tab-requests-btn').style.border = tab==='requests'?'none':'1.5px solid rgba(0,0,0,.1)';
+}
+
+async function loadAdmin(){
+  // Load fundis
+  try {
+    const fSnap = await getDocs(query(collection(db,'fundis'), orderBy('joined_at','desc')));
+    const fundis = [];
+    fSnap.forEach(d=>fundis.push({id:d.id,...d.data()}));
+    document.getElementById('stat-fundis').textContent = fundis.length;
+    document.getElementById('stat-pending').textContent = fundis.filter(f=>f.status==='pending').length;
+
+    document.getElementById('admin-fundis-list').innerHTML = fundis.length===0
+      ? '<div style="text-align:center;padding:40px;color:var(--muted)">No fundis yet</div>'
+      : fundis.map(f=>`
+        <div style="background:var(--surface);border-radius:14px;padding:18px;box-shadow:var(--sh);border-left:4px solid ${f.status==='active'?'var(--wa)':f.status==='pending'?'var(--gold)':'var(--danger)'}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+            <div>
+              <div style="font-weight:700;font-size:15px">${f.name}</div>
+              <div style="font-size:12px;color:var(--teal);font-weight:600;margin-top:2px">${f.service} · ${f.area}</div>
+            </div>
+            <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:${f.status==='active'?'#e0fbe9':f.status==='pending'?'var(--gold-lt)':'#ffe5e5'};color:${f.status==='active'?'#1a6e34':f.status==='pending'?'#7a4800':'var(--danger)'}">${f.status.toUpperCase()}</span>
+          </div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:10px">${f.bio||'No bio'}</div>
+          <div style="display:flex;gap:6px;font-size:12px;flex-wrap:wrap;margin-bottom:12px">
+            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">📞 ${f.phone}</span>
+            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">💰 ${f.pricing_display||'TBD'}</span>
+            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">🕐 ${f.experience||'?'}</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            ${f.status!=='active'?`<button onclick="updateFundi('${f.id}','active')" style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--wa);color:#fff;font-weight:700;font-size:13px">✓ Approve</button>`:''}
+            ${f.status==='active'?`<button onclick="updateFundi('${f.id}','suspended')" style="flex:1;padding:10px;border-radius:10px;border:none;background:#fde8e8;color:var(--danger);font-weight:700;font-size:13px">Suspend</button>`:''}
+            <a href="https://wa.me/${f.phone.replace(/^0/,'254')}" target="_blank" style="flex:1;padding:10px;border-radius:10px;background:var(--teal-lt);color:var(--teal-dk);font-weight:700;font-size:13px;text-align:center;display:block">WhatsApp</a>
+          </div>
+        </div>
+      `).join('');
+  } catch(e){
+    document.getElementById('admin-fundis-list').innerHTML='<div style="color:var(--danger);padding:20px">Error loading fundis — check Firestore rules</div>';
+  }
+
+  // Load requests
+  try {
+    const rSnap = await getDocs(query(collection(db,'requests'), orderBy('created_at','desc')));
+    const reqs = [];
+    rSnap.forEach(d=>reqs.push({id:d.id,...d.data()}));
+    document.getElementById('stat-requests').textContent = reqs.length;
+
+    document.getElementById('admin-requests-list').innerHTML = reqs.length===0
+      ? '<div style="text-align:center;padding:40px;color:var(--muted)">No requests yet</div>'
+      : reqs.map(r=>`
+        <div style="background:var(--surface);border-radius:14px;padding:18px;box-shadow:var(--sh);border-left:4px solid ${r.status==='new'?'var(--gold)':r.status==='matched'?'var(--teal)':'#ccc'}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+            <div>
+              <div style="font-weight:700;font-size:15px">${r.customer_name}</div>
+              <div style="font-size:12px;color:var(--teal);font-weight:600;margin-top:2px">${r.service} · ${r.location}</div>
+            </div>
+            <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:${r.status==='new'?'var(--gold-lt)':r.status==='matched'?'var(--teal-lt)':'var(--bg)'};color:${r.status==='new'?'#7a4800':r.status==='matched'?'var(--teal-dk)':'var(--muted)'}">${r.status.toUpperCase()}</span>
+          </div>
+          <div style="font-size:13px;color:var(--ink2);margin-bottom:8px">${r.issue}</div>
+          <div style="display:flex;gap:6px;font-size:12px;flex-wrap:wrap;margin-bottom:12px">
+            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">📞 ${r.customer_phone}</span>
+            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">${r.urgency}</span>
+            ${r.preferred_time?`<span style="background:var(--bg);padding:4px 10px;border-radius:8px">🕐 ${r.preferred_time}</span>`:''}
+          </div>
+          <div style="display:flex;gap:8px">
+            ${r.status==='new'?`<button onclick="updateRequest('${r.id}','matched')" style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--teal);color:#fff;font-weight:700;font-size:13px">Mark Matched</button>`:''}
+            ${r.status==='matched'?`<button onclick="updateRequest('${r.id}','done')" style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--bg);color:var(--ink2);font-weight:700;font-size:13px">Mark Done</button>`:''}
+            <a href="https://wa.me/${r.customer_phone.replace(/^0/,'254')}" target="_blank" style="flex:1;padding:10px;border-radius:10px;background:var(--teal-lt);color:var(--teal-dk);font-weight:700;font-size:13px;text-align:center;display:block">Call Customer</a>
+          </div>
+        </div>
+      `).join('');
+  } catch(e){
+    document.getElementById('admin-requests-list').innerHTML='<div style="color:var(--danger);padding:20px">Error loading requests — check Firestore rules</div>';
+  }
+}
+
+window.updateFundi = async function(id, status){
+  try {
+    await updateDoc(doc(db,'fundis',id),{status});
+    toast(status==='active'?'✅ Fundi approved!':'⚠️ Fundi suspended');
+    loadAdmin();
+  } catch(e){ toast('Error updating — check Firestore rules'); }
+}
+
+window.updateRequest = async function(id, status){
+  try {
+    await updateDoc(doc(db,'requests',id),{status});
+    toast(status==='matched'?'✅ Marked as matched':'✅ Marked as done');
+    loadAdmin();
+  } catch(e){ toast('Error updating — check Firestore rules'); }
+}
+
 </script>
 </body>
 </html>
