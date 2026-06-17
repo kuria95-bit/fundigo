@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>FundiGo – Home Services in Roysambu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ─────────────────────────────────────── */
+:root{
+  --ink:#0D0F14; --ink2:#3B3F4C; --muted:#7C8292;
+  --surface:#fff; --bg:#F2F4F7;
+  --teal:#00897B; --teal-lt:#E0F4F2; --teal-dk:#006157;
+  --gold:#E8A020; --gold-lt:#FDF3E0;
+  --wa:#25D366; --danger:#E53935;
+  --r:14px; --rl:20px;
+  --sh:0 2px 18px rgba(0,0,0,0.08);
+  --sh2:0 8px 40px rgba(0,0,0,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+
+/* ── VIEWS ──────────────────────────────────────── */
+.view{display:none}
+.view.active{display:block}
+
+/* ── ANIMATIONS ─────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes badgePop{0%{transform:scale(0.7);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.anim-fadeup{animation:fadeUp .55s ease both}
+.anim-fadeup-2{animation:fadeUp .55s .1s ease both}
+.anim-fadeup-3{animation:fadeUp .55s .2s ease both}
+.anim-fadeup-4{animation:fadeUp .55s .3s ease both}
+
+/* ── NAV ────────────────────────────────────────── */
+.nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(0,0,0,.07);
+  padding:0 20px;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;letter-spacing:-.5px}
+.nav-logo span{color:var(--teal)}
+.nav-logo sup{font-size:10px;color:var(--gold);font-weight:700;letter-spacing:0;vertical-align:super}
+.nav-back{background:none;border:none;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--teal);padding:8px 0}
+.nav-back svg{width:18px;height:18px}
+.nav-pill{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:700;transition:background .15s,transform .1s}
+.nav-pill:active{background:var(--teal-dk);transform:scale(.97)}
+
+/* ── HERO ───────────────────────────────────────── */
+.hero{
+  background:var(--ink);
+  padding:44px 24px 0;
+  position:relative;overflow:hidden;min-height:520px;
+  display:flex;flex-direction:column;
+}
+.hero-glow{
+  position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);
+  width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,137,123,.5) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);
+  border-radius:99px;padding:6px 14px;
+  font-size:12px;font-weight:600;color:rgba(255,255,255,.8);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:18px;width:fit-content;
+}
+.hero-badge .live-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--wa);
+  animation:pulse 1.8s infinite;
+}
+.hero h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(30px,9vw,44px);font-weight:700;
+  line-height:1.08;letter-spacing:-1.2px;color:#fff;
+  margin-bottom:14px;
+}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero-sub{font-size:15px;line-height:1.65;color:rgba(255,255,255,.58);margin-bottom:28px;max-width:330px}
+.hero-btns{display:flex;flex-direction:column;gap:11px;margin-bottom:32px}
+
+/* Hero service pills strip */
+.hero-pills{
+  display:flex;gap:10px;
+  margin:0 0 32px;
+  position:relative;z-index:2;
+  flex-wrap:wrap;
+}
+.hero-pill{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:14px;padding:14px 18px;
+  display:flex;align-items:center;gap:10px;
+  flex:1;min-width:130px;
+}
+.hero-pill .hp-icon{font-size:26px;animation:float 3s ease-in-out infinite}
+.hero-pill:nth-child(2) .hp-icon{animation-delay:.4s}
+.hero-pill:nth-child(3) .hp-icon{animation-delay:.8s}
+.hero-pill .hp-label{font-size:13px;font-weight:700;color:#fff;line-height:1.3}
+.hero-pill .hp-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+
+/* ── BUTTONS ────────────────────────────────────── */
+.btn-primary{
+  background:var(--teal);color:#fff;border:none;
+  border-radius:var(--r);padding:17px 22px;
+  font-size:16px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:background .15s,transform .1s,box-shadow .15s;
+  box-shadow:0 4px 16px rgba(0,137,123,.35);
+  width:100%;
+}
+.btn-primary:active{background:var(--teal-dk);transform:scale(.98);box-shadow:none}
+.btn-ghost{
+  background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.2);
+  color:#fff;border-radius:var(--r);padding:16px 22px;
+  font-size:15px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:background .15s;width:100%;
+}
+.btn-ghost:active{background:rgba(255,255,255,.16)}
+.btn-wa{
+  width:100%;background:var(--wa);color:#fff;border:none;
+  border-radius:var(--r);padding:18px;
+  font-size:16px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:filter .15s,transform .1s;
+  box-shadow:0 4px 16px rgba(37,211,102,.35);
+}
+.btn-wa:active{filter:brightness(.9);transform:scale(.98)}
+.btn-outline{
+  width:100%;background:none;border:1.5px solid rgba(0,0,0,.12);
+  color:var(--ink2);border-radius:var(--r);padding:16px;
+  font-size:15px;font-weight:600;
+  transition:border-color .15s,color .15s;
+}
+.btn-outline:active{border-color:var(--teal);color:var(--teal)}
+.btn-teal{
+  width:100%;background:var(--teal);color:#fff;border:none;
+  border-radius:var(--r);padding:17px;
+  font-size:16px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:background .15s,transform .1s;
+}
+.btn-teal:active{background:var(--teal-dk);transform:scale(.98)}
+
+/* ── SECTION ────────────────────────────────────── */
+.section{padding:40px 20px}
+.sec-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:7px}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:22px;line-height:1.2}
+
+/* ── TRUST STRIP ────────────────────────────────── */
+.trust{background:var(--ink);padding:26px 20px;display:flex}
+.trust-item{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,.1)}
+.trust-item:last-child{border-right:none}
+.trust-num{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--gold)}
+.trust-lbl{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px}
+
+/* ── SERVICE CARDS (landing) ─────────────────────── */
+.svc-cards{display:flex;flex-direction:column;gap:14px}
+.svc-card{
+  border-radius:var(--rl);overflow:hidden;position:relative;
+  height:140px;box-shadow:var(--sh2);
+  cursor:pointer;
+  display:flex;align-items:flex-end;padding:20px;
+  transition:transform .15s;
+}
+.svc-card:active{transform:scale(.98)}
+.svc-card.elec{background:linear-gradient(135deg,#0D1B2A 0%,#1B3A5C 100%)}
+.svc-card.plumb{background:linear-gradient(135deg,#0B2027 0%,#1A4040 100%)}
+.svc-card.tech{background:linear-gradient(135deg,#1A0A2E 0%,#2D1B5E 100%)}
+.svc-card-icon{
+  font-size:52px;position:absolute;right:20px;top:50%;
+  transform:translateY(-50%);opacity:.9;
+  animation:float 3s ease-in-out infinite;
+}
+.svc-card.plumb .svc-card-icon{animation-delay:.5s}
+.svc-card.tech .svc-card-icon{animation-delay:1s}
+.svc-card-content{position:relative;z-index:1}
+.svc-card-name{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.svc-card-sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:4px}
+.svc-card-tag{
+  position:absolute;top:14px;right:14px;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);
+  color:#fff;border-radius:99px;padding:4px 12px;
+  font-size:11px;font-weight:700;
+}
+
+/* ── HOW IT WORKS ───────────────────────────────── */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:16px;position:relative;padding-bottom:24px}
+.step:last-child{padding-bottom:0}
+.step-left{display:flex;flex-direction:column;align-items:center;gap:0}
+.step-num{
+  width:40px;height:40px;border-radius:12px;
+  background:var(--teal);color:#fff;
+  font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.step-line{width:2px;flex:1;background:rgba(0,137,123,.2);margin:6px 0}
+.step:last-child .step-line{display:none}
+.step-body{padding-top:8px}
+.step-body h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.step-body p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ── REVIEWS ────────────────────────────────────── */
+.reviews-scroll{
+  overflow-x:auto;padding:4px 20px 20px;
+  display:flex;gap:14px;scrollbar-width:none;
+}
+.reviews-scroll::-webkit-scrollbar{display:none}
+.review-card{
+  background:var(--surface);border-radius:var(--rl);padding:20px 18px;
+  min-width:262px;max-width:280px;flex-shrink:0;
+  box-shadow:var(--sh);display:flex;flex-direction:column;gap:12px;
+  border:1px solid rgba(0,0,0,.05);
+}
+.review-stars{color:var(--gold);font-size:14px;letter-spacing:1px}
+.review-text{font-size:14px;line-height:1.65;color:var(--ink2);font-style:italic}
+.review-text::before{content:'\201C'}
+.review-text::after{content:'\201D'}
+.review-author{display:flex;align-items:center;gap:10px;margin-top:auto}
+.review-av{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--teal-lt);color:var(--teal-dk);
+  font-size:14px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.review-name{font-size:13px;font-weight:700;color:var(--ink)}
+.review-loc{font-size:11px;color:var(--muted);margin-top:1px}
+.review-svc{
+  display:inline-block;background:var(--teal-lt);color:var(--teal-dk);
+  border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;
+}
+
+/* ── FUNDI SPOTLIGHT ────────────────────────────── */
+.fundi-scroll{
+  overflow-x:auto;padding:4px 20px 20px;
+  display:flex;gap:14px;scrollbar-width:none;
+}
+.fundi-scroll::-webkit-scrollbar{display:none}
+.fundi-card{
+  flex-shrink:0;width:150px;border-radius:var(--rl);
+  overflow:hidden;box-shadow:var(--sh);position:relative;
+  background:var(--surface);border:1px solid rgba(0,0,0,.06);
+}
+.fundi-avatar{
+  width:100%;height:120px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:36px;font-weight:700;color:#fff;
+  position:relative;
+}
+.fundi-avatar.a1{background:linear-gradient(135deg,#006157,#00897B)}
+.fundi-avatar.a2{background:linear-gradient(135deg,#1A237E,#3949AB)}
+.fundi-avatar.a3{background:linear-gradient(135deg,#4A148C,#7B1FA2)}
+.fundi-avatar.a4{background:linear-gradient(135deg,#0D47A1,#1976D2)}
+.fundi-card-info{padding:12px;background:#fff}
+.fundi-card-name{font-size:14px;font-weight:700;color:var(--ink)}
+.fundi-card-svc{font-size:12px;color:var(--teal);font-weight:600;margin-top:2px}
+.fundi-card-area{font-size:11px;color:var(--muted);margin-top:1px}
+.fundi-avail{
+  position:absolute;top:10px;right:10px;
+  background:var(--wa);color:#fff;
+  border-radius:99px;padding:3px 9px;font-size:11px;font-weight:700;
+  display:flex;align-items:center;gap:4px;
+}
+.fundi-avail::before{content:'';width:5px;height:5px;border-radius:50%;background:#fff;animation:pulse 1.5s infinite}
+
+/* ── FORM ───────────────────────────────────────── */
+.card{
+  background:var(--surface);border-radius:var(--rl);
+  padding:24px 20px;box-shadow:var(--sh);margin:0 20px 20px;
+}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:6px}
+.card-sub{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--bg);border:1.5px solid transparent;
+  border-radius:12px;padding:14px 16px;
+  font-size:15px;color:var(--ink);outline:none;
+  transition:border-color .15s,background .15s;-webkit-appearance:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal);background:#fff}
+.field textarea{resize:none;height:88px}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%237C8292' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;padding-right:40px;
+}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-hint{font-size:11px;color:var(--muted);margin-top:5px}
+.required{color:var(--danger)}
+
+/* ── CATEGORY GRID (form) ───────────────────────── */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.cat-btn{
+  background:var(--bg);border:2px solid transparent;
+  border-radius:var(--r);padding:18px 6px 14px;
+  text-align:center;cursor:pointer;
+  transition:border-color .15s,background .15s,transform .1s;
+}
+.cat-btn:active{transform:scale(.96)}
+.cat-btn.sel{border-color:var(--teal);background:var(--teal-lt)}
+.cat-btn .ci{font-size:26px;margin-bottom:7px}
+.cat-btn .cl{font-size:12px;font-weight:700;color:var(--ink2);line-height:1.3}
+.cat-btn.sel .cl{color:var(--teal-dk)}
+
+/* ── SUCCESS ────────────────────────────────────── */
+.success-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;padding:48px 28px;
+}
+.success-icon{
+  width:80px;height:80px;border-radius:50%;
+  background:var(--teal-lt);
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;margin-bottom:22px;
+  animation:badgePop .5s ease both;
+}
+.success-wrap h2{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:10px}
+.success-wrap p{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:28px}
+.wa-preview{
+  background:#E9FBF0;border-radius:14px;padding:16px;
+  text-align:left;width:100%;margin-bottom:22px;
+  border:1px solid rgba(37,211,102,.2);
+}
+.wa-preview .wa-label{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#1a8a44;margin-bottom:8px}
+.wa-preview .wa-body{font-size:13px;color:#0D4024;line-height:1.75;white-space:pre-wrap}
+
+/* ── TOAST ──────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:#fff;border-radius:99px;padding:12px 22px;
+  font-size:14px;font-weight:600;z-index:999;opacity:0;
+  transition:transform .3s,opacity .3s;white-space:nowrap;
+  max-width:90vw;display:flex;align-items:center;gap:8px;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* ── AREA NOTICE BANNER ─────────────────────────── */
+.area-notice{
+  background:var(--gold-lt);border:1px solid rgba(232,160,32,.25);
+  border-radius:12px;padding:14px 16px;
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:13px;color:var(--ink2);line-height:1.55;
+  margin-bottom:20px;
+}
+.area-notice .icon{font-size:18px;flex-shrink:0;margin-top:1px}
+
+/* ── MISC ───────────────────────────────────────── */
+.spacer{height:32px}
+.divider{height:1px;background:rgba(0,0,0,.06);margin:8px 0 24px}
+.footer{background:var(--ink);color:rgba(255,255,255,.38);text-align:center;padding:30px 20px;font-size:12px;line-height:1.8}
+.footer strong{color:rgba(255,255,255,.7)}
+
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HOME
+══════════════════════════════════════ -->
+<div class="view active" id="v-home">
+
+  <nav class="nav">
+    <div class="nav-logo">Fundi<span>Go</span><sup>KE</sup></div>
+    <button class="nav-pill" onclick="show('v-request')">Get Help Now</button>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+
+    <div class="hero-badge anim-fadeup">
+      <span class="live-dot"></span> Now serving Roysambu
+    </div>
+    <h1 class="anim-fadeup-2">Your local fundi,<br/><em>minutes away.</em></h1>
+    <p class="hero-sub anim-fadeup-3">Electricians, plumbers and phone/laptop repair — verified, local, and available right now in Roysambu.</p>
+    <div class="hero-btns anim-fadeup-4">
+      <button class="btn-primary" onclick="show('v-request')">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Request a fundi now
+      </button>
+      <button class="btn-ghost" onclick="show('v-join')">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        I'm a fundi — join us
+      </button>
+    </div>
+
+    <!-- SERVICE PILLS -->
+    <div class="hero-pills">
+      <div class="hero-pill">
+        <div class="hp-icon">⚡</div>
+        <div><div class="hp-label">Electrician</div><div class="hp-sub">Wiring · Faults</div></div>
+      </div>
+      <div class="hero-pill">
+        <div class="hp-icon">🔧</div>
+        <div><div class="hp-label">Plumber</div><div class="hp-sub">Pipes · Leaks</div></div>
+      </div>
+      <div class="hero-pill">
+        <div class="hp-icon">📱</div>
+        <div><div class="hp-label">Tech Repair</div><div class="hp-sub">Phone · Laptop</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUST STRIP -->
+  <div class="trust">
+    <div class="trust-item"><div class="trust-num">Roysambu</div><div class="trust-lbl">Only</div></div>
+    <div class="trust-item"><div class="trust-num">3</div><div class="trust-lbl">Core services</div></div>
+    <div class="trust-item"><div class="trust-num">&lt;30m</div><div class="trust-lbl">Avg. response</div></div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="section" style="padding-bottom:12px">
+    <div class="sec-label">What we offer</div>
+    <div class="sec-title">Three services,<br/>done right.</div>
+    <div class="svc-cards">
+
+      <div class="svc-card elec" onclick="show('v-request')">
+        <div class="svc-card-icon">⚡</div>
+        <div class="svc-card-content">
+          <div class="svc-card-name">Electrician</div>
+          <div class="svc-card-sub">Wiring · Faults · Sockets · Lighting</div>
+        </div>
+        <div class="svc-card-tag">Book Now</div>
+      </div>
+
+      <div class="svc-card plumb" onclick="show('v-request')">
+        <div class="svc-card-icon">🔧</div>
+        <div class="svc-card-content">
+          <div class="svc-card-name">Plumber</div>
+          <div class="svc-card-sub">Pipes · Leaks · Showers · Blockages</div>
+        </div>
+        <div class="svc-card-tag">Book Now</div>
+      </div>
+
+      <div class="svc-card tech" onclick="show('v-request')">
+        <div class="svc-card-icon">📱</div>
+        <div class="svc-card-content">
+          <div class="svc-card-name">Phone &amp; Laptop Repair</div>
+          <div class="svc-card-sub">Screens · Batteries · Software · Data</div>
+        </div>
+        <div class="svc-card-tag">Book Now</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section" style="background:var(--surface);margin:0">
+    <div class="sec-label">The process</div>
+    <div class="sec-title">Three steps<br/>to sorted.</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <h3>Tell us what you need</h3>
+          <p>Pick your service, drop your area in Roysambu, and describe the problem. Takes under 2 minutes.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-num">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <h3>We match you instantly</h3>
+          <p>Your request lands on our WhatsApp. We find the nearest available fundi and connect you both — no waiting around.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-num">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <h3>Your fundi arrives</h3>
+          <p>Confirm details on WhatsApp, agree on price, and your fundi is on their way. Simple.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEET OUR FUNDIS -->
+  <div class="section" style="padding-bottom:8px">
+    <div class="sec-label">The team</div>
+    <div class="sec-title">Meet our fundis</div>
+  </div>
+  <div class="fundi-scroll">
+
+    <div class="fundi-card">
+      <div class="fundi-avatar a1">JM</div>
+      <div class="fundi-avail">Available</div>
+      <div class="fundi-card-info">
+        <div class="fundi-card-name">James M.</div>
+        <div class="fundi-card-svc">⚡ Electrician</div>
+        <div class="fundi-card-area">📍 Mirema</div>
+      </div>
+    </div>
+
+    <div class="fundi-card">
+      <div class="fundi-avatar a2">PK</div>
+      <div class="fundi-avail">Available</div>
+      <div class="fundi-card-info">
+        <div class="fundi-card-name">Peter K.</div>
+        <div class="fundi-card-svc">🔧 Plumber</div>
+        <div class="fundi-card-area">📍 Zimmerman</div>
+      </div>
+    </div>
+
+    <div class="fundi-card">
+      <div class="fundi-avatar a3">KO</div>
+      <div class="fundi-avail">Available</div>
+      <div class="fundi-card-info">
+        <div class="fundi-card-name">Kevin O.</div>
+        <div class="fundi-card-svc">📱 Tech Repair</div>
+        <div class="fundi-card-area">📍 Githurai 44</div>
+      </div>
+    </div>
+
+    <div class="fundi-card">
+      <div class="fundi-avatar a4">DN</div>
+      <div class="fundi-avail">Available</div>
+      <div class="fundi-card-info">
+        <div class="fundi-card-name">David N.</div>
+        <div class="fundi-card-svc">⚡ Electrician</div>
+        <div class="fundi-card-area">📍 Lucky Summer</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="section" style="padding-bottom:8px">
+    <div class="sec-label">Real people, real jobs</div>
+    <div class="sec-title">What Roysambu<br/>residents say</div>
+  </div>
+  <div class="reviews-scroll">
+
+    <div class="review-card">
+      <div class="review-svc">⚡ Electrician</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">My power tripped at 8pm and I was panicking. FundiGo connected me with a fundi who was at my door in under 20 minutes. Problem sorted same night!</div>
+      <div class="review-author">
+        <div class="review-av">MW</div>
+        <div><div class="review-name">Mary Wanjiku</div><div class="review-loc">📍 Mirema Road</div></div>
+      </div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-svc">🔧 Plumber</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">Burst pipe on a Saturday morning. I didn't know who to call. Sent a request and the plumber arrived fast. Very professional, very affordable.</div>
+      <div class="review-author">
+        <div class="review-av">BK</div>
+        <div><div class="review-name">Brian Kamau</div><div class="review-loc">📍 Roysambu Estate</div></div>
+      </div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-svc">📱 Tech Repair</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">Cracked my screen and needed it fixed for work. The technician came to me in Roysambu. Fixed in 45 mins. Honestly saved my whole week.</div>
+      <div class="review-author">
+        <div class="review-av">JO</div>
+        <div><div class="review-name">James Otieno</div><div class="review-loc">📍 Near TRM</div></div>
+      </div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-svc">🔧 Plumber</div>
+      <div class="review-stars">★★★★☆</div>
+      <div class="review-text">Shower was leaking for weeks. One message on FundiGo and the plumber came next morning. Clean job, fair price. I'll definitely use again.</div>
+      <div class="review-author">
+        <div class="review-av">PN</div>
+        <div><div class="review-name">Patricia Njeri</div><div class="review-loc">📍 Zimmerman</div></div>
+      </div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-svc">⚡ Electrician</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">New sockets installed in my shop. The fundi was on time, worked fast and was very neat. WhatsApp communication was smooth throughout.</div>
+      <div class="review-author">
+        <div class="review-av">SM</div>
+        <div><div class="review-name">Samuel Mwenda</div><div class="review-loc">📍 Githurai 45</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FUNDI CTA STRIP -->
+  <div style="background:var(--teal);padding:40px 24px;text-align:center;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.07)"></div>
+    <div style="position:absolute;bottom:-50px;left:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:-.4px;margin-bottom:10px;position:relative">Are you a fundi?</div>
+    <div style="font-size:14px;color:rgba(255,255,255,.75);margin-bottom:24px;line-height:1.65;max-width:300px;margin-left:auto;margin-right:auto;position:relative">Get job requests from Roysambu customers sent straight to your WhatsApp. Free to join.</div>
+    <button class="btn-wa" style="max-width:320px;margin:0 auto;position:relative" onclick="show('v-join')">
+      <svg width="22" height="22" viewBox="0 0 32 32" fill="currentColor"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.547 1.68 6.467L2.667 29.333l7.093-1.653A13.28 13.28 0 0 0 16.004 29.333C23.36 29.333 29.333 23.36 29.333 16c0-7.36-5.973-13.333-13.329-13.333zm6.053 16.027c-.333-.167-1.947-.96-2.24-1.067-.307-.107-.52-.16-.733.16-.213.32-.84 1.067-1.04 1.28-.187.213-.373.24-.693.08-.32-.16-1.36-.507-2.587-1.6-.96-.853-1.6-1.907-1.787-2.24-.187-.32-.027-.493.133-.653.16-.147.32-.373.48-.56.147-.187.2-.32.307-.533.107-.213.053-.4-.027-.56-.08-.16-.733-1.76-1-2.4-.267-.627-.533-.547-.733-.547h-.627c-.213 0-.56.08-.853.4-.293.307-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.08 1.947-.8 2.213-1.573.267-.773.267-1.44.187-1.573-.08-.12-.293-.2-.613-.36z"/></svg>
+      Register as a fundi — it's free
+    </button>
+  </div>
+
+  <div class="footer">
+    <strong>FundiGo Kenya</strong><br/>
+    Connecting Roysambu homes with trusted local fundis.<br/>
+    Serving: Mirema · Zimmerman · Githurai 44 &amp; 45 · Lucky Summer · Roysambu Estate · TRM Area<br/><br/>
+    Powered by WhatsApp &nbsp;·&nbsp; Roysambu, Nairobi
+  </div>
+
+</div><!-- /v-home -->
+
+
+<!-- ══════════════════════════════════════
+     REQUEST SERVICE
+══════════════════════════════════════ -->
+<div class="view" id="v-request">
+  <nav class="nav">
+    <button class="nav-back" onclick="show('v-home')">
+      <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
+    </button>
+    <div class="nav-logo">Fundi<span>Go</span></div>
+    <div style="width:56px"></div>
+  </nav>
+
+  <div class="spacer"></div>
+  <div class="card">
+    <div class="card-title">Request a fundi</div>
+    <div class="card-sub">Fill in your details below. Your request goes straight to our WhatsApp team and we'll match you with the right fundi.</div>
+
+    <div class="area-notice">
+      <span class="icon">📍</span>
+      <span><strong>Roysambu only</strong> — we currently serve Mirema, Zimmerman, Githurai, Lucky Summer, and surrounding areas.</span>
+    </div>
+
+    <div class="field">
+      <label>Service needed <span class="required">*</span></label>
+      <div class="cat-grid" id="cat-grid">
+        <div class="cat-btn" onclick="pickCat(this,'Electrician')">
+          <div class="ci">⚡</div><div class="cl">Electrician</div>
+        </div>
+        <div class="cat-btn" onclick="pickCat(this,'Plumber')">
+          <div class="ci">🔧</div><div class="cl">Plumber</div>
+        </div>
+        <div class="cat-btn" onclick="pickCat(this,'Phone / Laptop Repair')">
+          <div class="ci">📱</div><div class="cl">Phone / Laptop</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Your name <span class="required">*</span></label>
+      <input type="text" id="r-name" placeholder="e.g. Jane Wanjiru"/>
+    </div>
+    <div class="field">
+      <label>Your WhatsApp number <span class="required">*</span></label>
+      <input type="tel" id="r-phone" placeholder="e.g. 0712 345 678"/>
+      <div class="field-hint">We'll use this to connect you with your fundi.</div>
+    </div>
+    <div class="field">
+      <label>Your area in Roysambu <span class="required">*</span></label>
+      <select id="r-location">
+        <option value="">— Select your area —</option>
+        <option>Mirema Road</option>
+        <option>Mirema Drive</option>
+        <option>Zimmerman</option>
+        <option>Githurai 44</option>
+        <option>Githurai 45</option>
+        <option>Lucky Summer</option>
+        <option>Roysambu Estate</option>
+        <option>TRM Area / Thika Road Mall</option>
+        <option>Kahawa West</option>
+        <option>Clay City</option>
+        <option>Seasons / Garden Estate</option>
+        <option>Other (mention below)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Describe the issue <span class="required">*</span></label>
+      <textarea id="r-issue" placeholder="e.g. My shower is not working, the switch seems faulty and there's no hot water…"></textarea>
+    </div>
+    <div class="field">
+      <label>Urgency</label>
+      <select id="r-urgency">
+        <option>🔴 Urgent — within the hour</option>
+        <option>🟡 Today — within a few hours</option>
+        <option>🟢 Planned — this week works</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Preferred time (optional)</label>
+      <input type="text" id="r-time" placeholder="e.g. Today after 3pm, Tomorrow morning"/>
+    </div>
+
+    <button class="btn-wa" onclick="submitRequest()">
+      <svg width="22" height="22" viewBox="0 0 32 32" fill="currentColor"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.547 1.68 6.467L2.667 29.333l7.093-1.653A13.28 13.28 0 0 0 16.004 29.333C23.36 29.333 29.333 23.36 29.333 16c0-7.36-5.973-13.333-13.329-13.333zm6.053 16.027c-.333-.167-1.947-.96-2.24-1.067-.307-.107-.52-.16-.733.16-.213.32-.84 1.067-1.04 1.28-.187.213-.373.24-.693.08-.32-.16-1.36-.507-2.587-1.6-.96-.853-1.6-1.907-1.787-2.24-.187-.32-.027-.493.133-.653.16-.147.32-.373.48-.56.147-.187.2-.32.307-.533.107-.213.053-.4-.027-.56-.08-.16-.733-1.76-1-2.4-.267-.627-.533-.547-.733-.547h-.627c-.213 0-.56.08-.853.4-.293.307-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.08 1.947-.8 2.213-1.573.267-.773.267-1.44.187-1.573-.08-.12-.293-.2-.613-.36z"/></svg>
+      Send Request via WhatsApp
+    </button>
+    <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:10px">Tapping this opens WhatsApp with your request pre-filled and sends it to the FundiGo team.</p>
+  </div>
+  <div class="spacer"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     REQUEST SUCCESS
+══════════════════════════════════════ -->
+<div class="view" id="v-request-done">
+  <nav class="nav">
+    <div class="nav-logo">Fundi<span>Go</span></div>
+  </nav>
+  <div class="success-wrap">
+    <div class="success-icon">✅</div>
+    <h2>Request sent!</h2>
+    <p>WhatsApp has opened with your request ready. Our team will match you with the nearest available fundi in your area — usually within minutes.</p>
+    <div class="wa-preview" id="req-preview"></div>
+    <button class="btn-teal" onclick="sendRequestWA()" style="margin-bottom:12px">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.547 1.68 6.467L2.667 29.333l7.093-1.653A13.28 13.28 0 0 0 16.004 29.333C23.36 29.333 29.333 23.36 29.333 16c0-7.36-5.973-13.333-13.329-13.333zm6.053 16.027c-.333-.167-1.947-.96-2.24-1.067-.307-.107-.52-.16-.733.16-.213.32-.84 1.067-1.04 1.28-.187.213-.373.24-.693.08-.32-.16-1.36-.507-2.587-1.6-.96-.853-1.6-1.907-1.787-2.24-.187-.32-.027-.493.133-.653.16-.147.32-.373.48-.56.147-.187.2-.32.307-.533.107-.213.053-.4-.027-.56-.08-.16-.733-1.76-1-2.4-.267-.627-.533-.547-.733-.547h-.627c-.213 0-.56.08-.853.4-.293.307-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.08 1.947-.8 2.213-1.573.267-.773.267-1.44.187-1.573-.08-.12-.293-.2-.613-.36z"/></svg>
+      Open WhatsApp Again
+    </button>
+    <button class="btn-outline" onclick="show('v-home')">Back to home</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     JOIN AS FUNDI
+══════════════════════════════════════ -->
+<div class="view" id="v-join">
+  <nav class="nav">
+    <button class="nav-back" onclick="show('v-home')">
+      <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back
+    </button>
+    <div class="nav-logo">Fundi<span>Go</span></div>
+    <div style="width:56px"></div>
+  </nav>
+
+  <!-- JOIN HERO -->
+  <div style="background:linear-gradient(135deg,#006157 0%,#00897B 60%,#00BFA5 100%);padding:36px 24px 32px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.08)"></div>
+    <div style="position:absolute;bottom:-40px;left:-20px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+    <div style="font-size:40px;margin-bottom:12px;animation:float 3s ease-in-out infinite">👷</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px;position:relative">Join the FundiGo network</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.75);margin-top:6px;position:relative;line-height:1.5">Get job requests from Roysambu customers sent to your WhatsApp. Free forever.</div>
+  </div>
+
+  <div style="height:20px"></div>
+  <div class="card">
+    <div class="card-title">Your details</div>
+    <div class="card-sub">Fill this in and our team will review your profile. Once approved, job leads from Roysambu customers land directly on your WhatsApp — at no cost.</div>
+
+    <div class="field">
+      <label>Full name <span class="required">*</span></label>
+      <input type="text" id="j-name" placeholder="e.g. James Kariuki"/>
+    </div>
+    <div class="field">
+      <label>WhatsApp number <span class="required">*</span></label>
+      <input type="tel" id="j-phone" placeholder="e.g. 0712 345 678"/>
+      <div class="field-hint">All job requests will be sent here. Keep it active.</div>
+    </div>
+    <div class="field">
+      <label>Your service / trade <span class="required">*</span></label>
+      <select id="j-service">
+        <option value="">— What do you do? —</option>
+        <option>Electrician</option>
+        <option>Plumber</option>
+        <option>Phone Repair</option>
+        <option>Laptop Repair</option>
+        <option>Phone &amp; Laptop Repair</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Your area in Roysambu <span class="required">*</span></label>
+      <select id="j-area">
+        <option value="">— Where do you operate? —</option>
+        <option>Mirema Road</option>
+        <option>Mirema Drive</option>
+        <option>Zimmerman</option>
+        <option>Githurai 44</option>
+        <option>Githurai 45</option>
+        <option>Lucky Summer</option>
+        <option>Roysambu Estate</option>
+        <option>TRM Area / Thika Road Mall</option>
+        <option>Kahawa West</option>
+        <option>Clay City</option>
+        <option>Seasons / Garden Estate</option>
+        <option>All of Roysambu</option>
+      </select>
+      <div class="field-hint">You can mention extra areas in your bio below.</div>
+    </div>
+    <div class="field">
+      <label>Years of experience</label>
+      <select id="j-exp">
+        <option>Less than 1 year</option>
+        <option>1–2 years</option>
+        <option>3–5 years</option>
+        <option>6–10 years</option>
+        <option>10+ years</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Pricing range (KSh)</label>
+      <div class="field-row">
+        <input type="number" id="j-pmin" placeholder="Min e.g. 500"/>
+        <input type="number" id="j-pmax" placeholder="Max e.g. 3000"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Brief bio — what you offer</label>
+      <textarea id="j-bio" placeholder="e.g. Certified electrician with 6 years experience. I handle wiring, faults, sockets and lighting. Available 7 days a week."></textarea>
+    </div>
+    <div class="field">
+      <label>Availability</label>
+      <select id="j-avail">
+        <option>Available now — ready for jobs today</option>
+        <option>Weekdays only (Mon–Fri)</option>
+        <option>Weekends only (Sat–Sun)</option>
+        <option>Flexible — contact me anytime</option>
+      </select>
+    </div>
+
+    <button class="btn-wa" onclick="submitJoin()">
+      <svg width="22" height="22" viewBox="0 0 32 32" fill="currentColor"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.547 1.68 6.467L2.667 29.333l7.093-1.653A13.28 13.28 0 0 0 16.004 29.333C23.36 29.333 29.333 23.36 29.333 16c0-7.36-5.973-13.333-13.329-13.333zm6.053 16.027c-.333-.167-1.947-.96-2.24-1.067-.307-.107-.52-.16-.733.16-.213.32-.84 1.067-1.04 1.28-.187.213-.373.24-.693.08-.32-.16-1.36-.507-2.587-1.6-.96-.853-1.6-1.907-1.787-2.24-.187-.32-.027-.493.133-.653.16-.147.32-.373.48-.56.147-.187.2-.32.307-.533.107-.213.053-.4-.027-.56-.08-.16-.733-1.76-1-2.4-.267-.627-.533-.547-.733-.547h-.627c-.213 0-.56.08-.853.4-.293.307-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.08 1.947-.8 2.213-1.573.267-.773.267-1.44.187-1.573-.08-.12-.293-.2-.613-.36z"/></svg>
+      Send Application via WhatsApp
+    </button>
+    <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:10px">Your profile goes to our team on WhatsApp. We review and add you within 24 hours.</p>
+  </div>
+  <div class="spacer"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     JOIN SUCCESS
+══════════════════════════════════════ -->
+<div class="view" id="v-join-done">
+  <nav class="nav">
+    <div class="nav-logo">Fundi<span>Go</span></div>
+  </nav>
+  <div class="success-wrap">
+    <div class="success-icon">🎉</div>
+    <h2>Application sent!</h2>
+    <p>Your details have been sent to the FundiGo team on WhatsApp. We'll review and add you to the Roysambu network within 24 hours.</p>
+    <div class="wa-preview" id="join-preview"></div>
+    <button class="btn-teal" onclick="sendJoinWA()" style="margin-bottom:12px">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M16.004 2.667C8.64 2.667 2.667 8.64 2.667 16c0 2.347.613 4.547 1.68 6.467L2.667 29.333l7.093-1.653A13.28 13.28 0 0 0 16.004 29.333C23.36 29.333 29.333 23.36 29.333 16c0-7.36-5.973-13.333-13.329-13.333zm6.053 16.027c-.333-.167-1.947-.96-2.24-1.067-.307-.107-.52-.16-.733.16-.213.32-.84 1.067-1.04 1.28-.187.213-.373.24-.693.08-.32-.16-1.36-.507-2.587-1.6-.96-.853-1.6-1.907-1.787-2.24-.187-.32-.027-.493.133-.653.16-.147.32-.373.48-.56.147-.187.2-.32.307-.533.107-.213.053-.4-.027-.56-.08-.16-.733-1.76-1-2.4-.267-.627-.533-.547-.733-.547h-.627c-.213 0-.56.08-.853.4-.293.307-1.12 1.093-1.12 2.667s1.147 3.093 1.307 3.307c.16.213 2.253 3.44 5.467 4.827.76.333 1.36.533 1.827.68.76.24 1.453.213 2 .133.613-.08 1.947-.8 2.213-1.573.267-.773.267-1.44.187-1.573-.08-.12-.293-.2-.613-.36z"/></svg>
+      Open WhatsApp Again
+    </button>
+    <button class="btn-outline" onclick="show('v-home')">Back to home</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── YOUR WHATSAPP BUSINESS NUMBER ─────────────────
+// Replace with your real number: country code + number, no + or spaces
+// Example: 254712345678
+const FUNDIGO_WA = '254712345678';
+
+let selectedCategory = '';
+let pendingRequestMsg = '';
+let pendingJoinMsg = '';
+
+function show(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function pickCat(el,name){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedCategory=name;
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function val(id){return document.getElementById(id).value.trim()}
+
+function shake(id){
+  const el=document.getElementById(id);
+  el.style.borderColor='var(--danger)';el.style.background='#fff5f5';
+  setTimeout(()=>{el.style.borderColor='';el.style.background=''},1800);
+}
+
+function openWA(msg){
+  window.open('https://wa.me/'+FUNDIGO_WA+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+function submitRequest(){
+  if(!selectedCategory){toast('⚠️ Please select a service');return}
+  const name=val('r-name'),phone=val('r-phone'),loc=val('r-location'),issue=val('r-issue');
+  if(!name){shake('r-name');toast('⚠️ Please enter your name');return}
+  if(!phone){shake('r-phone');toast('⚠️ Please enter your WhatsApp number');return}
+  if(!loc){shake('r-location');toast('⚠️ Please select your area');return}
+  if(!issue){shake('r-issue');toast('⚠️ Please describe the issue');return}
+
+  const urgency=val('r-urgency')||'🔴 Urgent — within the hour';
+  const ptime=val('r-time');
+
+  const msg=`🛠️ *NEW SERVICE REQUEST — FundiGo*\n──────────────────────\n*Service:* ${selectedCategory}\n*Name:* ${name}\n*Phone:* ${phone}\n*Location:* ${loc}, Roysambu\n*Issue:* ${issue}\n*Urgency:* ${urgency}${ptime?'\n*Preferred time:* '+ptime:''}\n──────────────────────\n_Sent via FundiGo app_`;
+
+  pendingRequestMsg=msg;
+  document.getElementById('req-preview').innerHTML=
+    '<div class="wa-label">📋 Message sent to FundiGo</div>'+
+    '<div class="wa-body">'+msg.replace(/\*/g,'').replace(/_/g,'')+'</div>';
+  show('v-request-done');
+  openWA(msg);
+}
+
+function sendRequestWA(){openWA(pendingRequestMsg)}
+
+function submitJoin(){
+  const name=val('j-name'),phone=val('j-phone'),service=val('j-service'),area=val('j-area');
+  if(!name){shake('j-name');toast('⚠️ Please enter your full name');return}
+  if(!phone){shake('j-phone');toast('⚠️ Please enter your WhatsApp number');return}
+  if(!service){shake('j-service');toast('⚠️ Please select your service');return}
+  if(!area){shake('j-area');toast('⚠️ Please select your area');return}
+
+  const exp=val('j-exp')||'Not specified';
+  const pmin=val('j-pmin'),pmax=val('j-pmax');
+  const pricing=pmin&&pmax?`KSh ${pmin} – ${pmax}`:pmin?`From KSh ${pmin}`:'To be discussed';
+  const bio=val('j-bio')||'Not provided';
+  const avail=val('j-avail')||'Flexible';
+
+  const msg=`👷 *NEW FUNDI APPLICATION — FundiGo*\n──────────────────────\n*Full name:* ${name}\n*WhatsApp:* ${phone}\n*Service:* ${service}\n*Area:* ${area}, Roysambu\n*Experience:* ${exp}\n*Pricing:* ${pricing}\n*Availability:* ${avail}\n*Bio:* ${bio}\n──────────────────────\n_Sent via FundiGo app_`;
+
+  pendingJoinMsg=msg;
+  document.getElementById('join-preview').innerHTML=
+    '<div class="wa-label">📋 Profile sent to FundiGo</div>'+
+    '<div class="wa-body">'+msg.replace(/\*/g,'').replace(/_/g,'')+'</div>';
+  show('v-join-done');
+  openWA(msg);
+}
+
+function sendJoinWA(){openWA(pendingJoinMsg)}
+</script>
+</body>
+</html>
