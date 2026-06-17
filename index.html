@@ -969,52 +969,56 @@ input,select,textarea{font-family:inherit}
   </div>
 </div>
 
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, serverTimestamp, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1VFEYPE3XG"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-1VFEYPE3XG');
+</script>
 
-// ── CONFIGURE YOUR FIREBASE PROJECT ───────────────
-// Replace these values with your actual Firebase project config
-// Firebase Console → Project Settings → Your apps → Web app → Config
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
+<script>
+// ── GOOGLE SHEETS URL ──────────────────────────────
+const SHEET_URL='https://script.google.com/macros/s/AKfycbwdx6-vKS183xT3nFIRktLSibN8Qz61hRoYByoFRvceQc4eqeripUoj4dBktHvwMalyNg/exec';
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// ── ADMIN PASSWORD (change this) ───────────────────
-const ADMIN_PASSWORD = 'fundigo2024';
-
-// ── WHATSAPP NUMBER ────────────────────────────────
-const FUNDIGO_WA = '254734447870';
+// ── CONFIG ─────────────────────────────────────────
+const FUNDIGO_WA='254734447870';
+const ADMIN_PASSWORD='fundigo2024';
 
 // ── STATE ──────────────────────────────────────────
-let selectedCategory = '';
-let pendingRequestMsg = '';
-let pendingJoinMsg = '';
-let adminLoggedIn = false;
+let selectedCategory='';
+let pendingRequestMsg='';
+let pendingJoinMsg='';
+let adminLoggedIn=false;
+
+// ── SAVE TO GOOGLE SHEETS ──────────────────────────
+async function saveToSheet(data){
+  try{
+    await fetch(SHEET_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
+    });
+  }catch(e){console.warn('Sheet save failed:',e);}
+}
 
 // ── CORE UTILS ─────────────────────────────────────
-window.show = function(id){
+window.show=function(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo({top:0,behavior:'instant'});
+  gtag('event','screen_view',{screen_name:id});
 }
 
-window.pickCat = function(el,name){
+window.pickCat=function(el,name){
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
   selectedCategory=name;
 }
 
-window.toast = function(msg){
+window.toast=function(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
@@ -1032,8 +1036,8 @@ function openWA(msg){
   window.open('https://wa.me/'+FUNDIGO_WA+'?text='+encodeURIComponent(msg),'_blank');
 }
 
-// ── SUBMIT REQUEST → FIRESTORE + WHATSAPP ──────────
-window.submitRequest = async function(){
+// ── SUBMIT REQUEST → SHEETS + WHATSAPP ─────────────
+window.submitRequest=async function(){
   if(!selectedCategory){toast('⚠️ Please select a service');return}
   const name=val('r-name'),phone=val('r-phone'),loc=val('r-location'),issue=val('r-issue');
   if(!name){shake('r-name');toast('⚠️ Please enter your name');return}
@@ -1044,21 +1048,20 @@ window.submitRequest = async function(){
   const urgency=val('r-urgency')||'🔴 Urgent — within the hour';
   const ptime=val('r-time');
 
-  // Save to Firestore
-  try {
-    await addDoc(collection(db,'requests'),{
-      service: selectedCategory,
-      customer_name: name,
-      customer_phone: phone,
-      location: loc,
-      issue: issue,
-      urgency: urgency,
-      preferred_time: ptime||null,
-      status: 'new',
-      assigned_fundi: null,
-      created_at: serverTimestamp()
-    });
-  } catch(e){ console.warn('Firestore write failed:',e); }
+  // Save to Google Sheets
+  await saveToSheet({
+    type:'request',
+    service:selectedCategory,
+    customer_name:name,
+    customer_phone:phone,
+    location:loc,
+    issue:issue,
+    urgency:urgency,
+    preferred_time:ptime||''
+  });
+
+  // Track in GA4
+  gtag('event','request_submitted',{service:selectedCategory,location:loc,urgency:urgency});
 
   const msg=`🛠️ *NEW SERVICE REQUEST — FundiGo*\n──────────────────────\n*Service:* ${selectedCategory}\n*Name:* ${name}\n*Phone:* ${phone}\n*Location:* ${loc}, Roysambu\n*Issue:* ${issue}\n*Urgency:* ${urgency}${ptime?'\n*Preferred time:* '+ptime:''}\n──────────────────────\n_Sent via FundiGo app_`;
 
@@ -1070,10 +1073,10 @@ window.submitRequest = async function(){
   openWA(msg);
 }
 
-window.sendRequestWA = function(){openWA(pendingRequestMsg)}
+window.sendRequestWA=function(){openWA(pendingRequestMsg)}
 
-// ── SUBMIT FUNDI APPLICATION → FIRESTORE + WHATSAPP
-window.submitJoin = async function(){
+// ── SUBMIT FUNDI APPLICATION → SHEETS + WHATSAPP ───
+window.submitJoin=async function(){
   const name=val('j-name'),phone=val('j-phone'),service=val('j-service'),area=val('j-area');
   if(!name){shake('j-name');toast('⚠️ Please enter your full name');return}
   if(!phone){shake('j-phone');toast('⚠️ Please enter your WhatsApp number');return}
@@ -1086,23 +1089,21 @@ window.submitJoin = async function(){
   const bio=val('j-bio')||'Not provided';
   const avail=val('j-avail')||'Flexible';
 
-  // Save to Firestore
-  try {
-    await addDoc(collection(db,'fundis'),{
-      name: name,
-      phone: phone,
-      service: service,
-      area: area,
-      experience: exp,
-      pricing_min: pmin||null,
-      pricing_max: pmax||null,
-      pricing_display: pricing,
-      bio: bio,
-      availability: avail,
-      status: 'pending',   // you approve in admin
-      joined_at: serverTimestamp()
-    });
-  } catch(e){ console.warn('Firestore write failed:',e); }
+  // Save to Google Sheets
+  await saveToSheet({
+    type:'fundi',
+    name:name,
+    phone:phone,
+    service:service,
+    area:area,
+    experience:exp,
+    pricing:pricing,
+    availability:avail,
+    bio:bio
+  });
+
+  // Track in GA4
+  gtag('event','fundi_applied',{service:service,area:area});
 
   const msg=`👷 *NEW FUNDI APPLICATION — FundiGo*\n──────────────────────\n*Full name:* ${name}\n*WhatsApp:* ${phone}\n*Service:* ${service}\n*Area:* ${area}, Roysambu\n*Experience:* ${exp}\n*Pricing:* ${pricing}\n*Availability:* ${avail}\n*Bio:* ${bio}\n──────────────────────\n_Sent via FundiGo app_`;
 
@@ -1114,131 +1115,41 @@ window.submitJoin = async function(){
   openWA(msg);
 }
 
-window.sendJoinWA = function(){openWA(pendingJoinMsg)}
+window.sendJoinWA=function(){openWA(pendingJoinMsg)}
 
 // ── ADMIN ──────────────────────────────────────────
-window.openAdmin = function(){
-  if(adminLoggedIn){ loadAdmin(); show('v-admin'); }
+window.openAdmin=function(){
+  if(adminLoggedIn){show('v-admin');}
   else show('v-admin-login');
 }
 
-window.adminLogin = function(){
+window.adminLogin=function(){
   const pw=document.getElementById('admin-pw').value;
   if(pw===ADMIN_PASSWORD){
     adminLoggedIn=true;
-    loadAdmin();
     show('v-admin');
-  } else {
+    toast('✅ Welcome to FundiGo Admin');
+  }else{
     document.getElementById('admin-pw').style.borderColor='var(--danger)';
     toast('⚠️ Wrong password');
   }
 }
 
-window.adminLogout = function(){
+window.adminLogout=function(){
   adminLoggedIn=false;
   show('v-home');
 }
 
-window.adminTab = function(tab){
-  document.getElementById('tab-fundis').style.display = tab==='fundis'?'block':'none';
-  document.getElementById('tab-requests').style.display = tab==='requests'?'block':'none';
-  document.getElementById('tab-fundis-btn').style.background = tab==='fundis'?'var(--teal)':'#fff';
-  document.getElementById('tab-fundis-btn').style.color = tab==='fundis'?'#fff':'var(--ink2)';
-  document.getElementById('tab-fundis-btn').style.border = tab==='fundis'?'none':'1.5px solid rgba(0,0,0,.1)';
-  document.getElementById('tab-requests-btn').style.background = tab==='requests'?'var(--teal)':'#fff';
-  document.getElementById('tab-requests-btn').style.color = tab==='requests'?'#fff':'var(--ink2)';
-  document.getElementById('tab-requests-btn').style.border = tab==='requests'?'none':'1.5px solid rgba(0,0,0,.1)';
+window.adminTab=function(tab){
+  document.getElementById('tab-fundis').style.display=tab==='fundis'?'block':'none';
+  document.getElementById('tab-requests').style.display=tab==='requests'?'block':'none';
+  document.getElementById('tab-fundis-btn').style.background=tab==='fundis'?'var(--teal)':'#fff';
+  document.getElementById('tab-fundis-btn').style.color=tab==='fundis'?'#fff':'var(--ink2)';
+  document.getElementById('tab-fundis-btn').style.border=tab==='fundis'?'none':'1.5px solid rgba(0,0,0,.1)';
+  document.getElementById('tab-requests-btn').style.background=tab==='requests'?'var(--teal)':'#fff';
+  document.getElementById('tab-requests-btn').style.color=tab==='requests'?'#fff':'var(--ink2)';
+  document.getElementById('tab-requests-btn').style.border=tab==='requests'?'none':'1.5px solid rgba(0,0,0,.1)';
 }
-
-async function loadAdmin(){
-  // Load fundis
-  try {
-    const fSnap = await getDocs(query(collection(db,'fundis'), orderBy('joined_at','desc')));
-    const fundis = [];
-    fSnap.forEach(d=>fundis.push({id:d.id,...d.data()}));
-    document.getElementById('stat-fundis').textContent = fundis.length;
-    document.getElementById('stat-pending').textContent = fundis.filter(f=>f.status==='pending').length;
-
-    document.getElementById('admin-fundis-list').innerHTML = fundis.length===0
-      ? '<div style="text-align:center;padding:40px;color:var(--muted)">No fundis yet</div>'
-      : fundis.map(f=>`
-        <div style="background:var(--surface);border-radius:14px;padding:18px;box-shadow:var(--sh);border-left:4px solid ${f.status==='active'?'var(--wa)':f.status==='pending'?'var(--gold)':'var(--danger)'}">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-            <div>
-              <div style="font-weight:700;font-size:15px">${f.name}</div>
-              <div style="font-size:12px;color:var(--teal);font-weight:600;margin-top:2px">${f.service} · ${f.area}</div>
-            </div>
-            <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:${f.status==='active'?'#e0fbe9':f.status==='pending'?'var(--gold-lt)':'#ffe5e5'};color:${f.status==='active'?'#1a6e34':f.status==='pending'?'#7a4800':'var(--danger)'}">${f.status.toUpperCase()}</span>
-          </div>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:10px">${f.bio||'No bio'}</div>
-          <div style="display:flex;gap:6px;font-size:12px;flex-wrap:wrap;margin-bottom:12px">
-            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">📞 ${f.phone}</span>
-            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">💰 ${f.pricing_display||'TBD'}</span>
-            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">🕐 ${f.experience||'?'}</span>
-          </div>
-          <div style="display:flex;gap:8px">
-            ${f.status!=='active'?`<button onclick="updateFundi('${f.id}','active')" style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--wa);color:#fff;font-weight:700;font-size:13px">✓ Approve</button>`:''}
-            ${f.status==='active'?`<button onclick="updateFundi('${f.id}','suspended')" style="flex:1;padding:10px;border-radius:10px;border:none;background:#fde8e8;color:var(--danger);font-weight:700;font-size:13px">Suspend</button>`:''}
-            <a href="https://wa.me/${f.phone.replace(/^0/,'254')}" target="_blank" style="flex:1;padding:10px;border-radius:10px;background:var(--teal-lt);color:var(--teal-dk);font-weight:700;font-size:13px;text-align:center;display:block">WhatsApp</a>
-          </div>
-        </div>
-      `).join('');
-  } catch(e){
-    document.getElementById('admin-fundis-list').innerHTML='<div style="color:var(--danger);padding:20px">Error loading fundis — check Firestore rules</div>';
-  }
-
-  // Load requests
-  try {
-    const rSnap = await getDocs(query(collection(db,'requests'), orderBy('created_at','desc')));
-    const reqs = [];
-    rSnap.forEach(d=>reqs.push({id:d.id,...d.data()}));
-    document.getElementById('stat-requests').textContent = reqs.length;
-
-    document.getElementById('admin-requests-list').innerHTML = reqs.length===0
-      ? '<div style="text-align:center;padding:40px;color:var(--muted)">No requests yet</div>'
-      : reqs.map(r=>`
-        <div style="background:var(--surface);border-radius:14px;padding:18px;box-shadow:var(--sh);border-left:4px solid ${r.status==='new'?'var(--gold)':r.status==='matched'?'var(--teal)':'#ccc'}">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-            <div>
-              <div style="font-weight:700;font-size:15px">${r.customer_name}</div>
-              <div style="font-size:12px;color:var(--teal);font-weight:600;margin-top:2px">${r.service} · ${r.location}</div>
-            </div>
-            <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:${r.status==='new'?'var(--gold-lt)':r.status==='matched'?'var(--teal-lt)':'var(--bg)'};color:${r.status==='new'?'#7a4800':r.status==='matched'?'var(--teal-dk)':'var(--muted)'}">${r.status.toUpperCase()}</span>
-          </div>
-          <div style="font-size:13px;color:var(--ink2);margin-bottom:8px">${r.issue}</div>
-          <div style="display:flex;gap:6px;font-size:12px;flex-wrap:wrap;margin-bottom:12px">
-            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">📞 ${r.customer_phone}</span>
-            <span style="background:var(--bg);padding:4px 10px;border-radius:8px">${r.urgency}</span>
-            ${r.preferred_time?`<span style="background:var(--bg);padding:4px 10px;border-radius:8px">🕐 ${r.preferred_time}</span>`:''}
-          </div>
-          <div style="display:flex;gap:8px">
-            ${r.status==='new'?`<button onclick="updateRequest('${r.id}','matched')" style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--teal);color:#fff;font-weight:700;font-size:13px">Mark Matched</button>`:''}
-            ${r.status==='matched'?`<button onclick="updateRequest('${r.id}','done')" style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--bg);color:var(--ink2);font-weight:700;font-size:13px">Mark Done</button>`:''}
-            <a href="https://wa.me/${r.customer_phone.replace(/^0/,'254')}" target="_blank" style="flex:1;padding:10px;border-radius:10px;background:var(--teal-lt);color:var(--teal-dk);font-weight:700;font-size:13px;text-align:center;display:block">Call Customer</a>
-          </div>
-        </div>
-      `).join('');
-  } catch(e){
-    document.getElementById('admin-requests-list').innerHTML='<div style="color:var(--danger);padding:20px">Error loading requests — check Firestore rules</div>';
-  }
-}
-
-window.updateFundi = async function(id, status){
-  try {
-    await updateDoc(doc(db,'fundis',id),{status});
-    toast(status==='active'?'✅ Fundi approved!':'⚠️ Fundi suspended');
-    loadAdmin();
-  } catch(e){ toast('Error updating — check Firestore rules'); }
-}
-
-window.updateRequest = async function(id, status){
-  try {
-    await updateDoc(doc(db,'requests',id),{status});
-    toast(status==='matched'?'✅ Marked as matched':'✅ Marked as done');
-    loadAdmin();
-  } catch(e){ toast('Error updating — check Firestore rules'); }
-}
-
 </script>
 </body>
 </html>
